@@ -1,0 +1,13 @@
+setup:
+  addons:
+    - plan: cleardb
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile.prod
+#release:
+#  image: web
+#  command:
+#    - ./init.sh
+run:
+  web: php artisan serve --host=0.0.0.0 --port=$PORT
