@@ -91,6 +91,13 @@ return [
             'prefix_indexes' => true,
         ],
 
+		// 単体テスト用のインメモリDB
+		'sqlite_testing' => [
+			'driver' => 'sqlite',
+			'database' => ':memory:',
+			'prefix' => '',
+		],
+
 		'circleci' => [
 			'driver' => 'mysql',
 			'host' => '127.0.0.1',
