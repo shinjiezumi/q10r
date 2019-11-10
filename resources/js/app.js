@@ -6,10 +6,48 @@
 
 require('./bootstrap');
 
-/**
- * Next, we will create a fresh React component instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+import {createMuiTheme, MuiThemeProvider} from "@material-ui/core";
+import 'ress'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {createStore, applyMiddleware} from 'redux'
+import {Provider} from 'react-redux'
+import thunk from 'redux-thunk'
+import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import {composeWithDevTools} from 'redux-devtools-extension'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {fab} from '@fortawesome/free-brands-svg-icons'
+import {fas} from '@fortawesome/free-solid-svg-icons'
+import {far} from '@fortawesome/free-regular-svg-icons'
+import {pink, blue} from '@material-ui/core/colors'
 
-require('./components/Example');
+import Top from './pages/Top'
+import Login from './pages/Login'
+
+const enhancer = process.env.NODE_ENV === 'development' ? composeWithDevTools(applyMiddleware(thunk)) : applyMiddleware(thunk);
+const store = createStore(/*reducer,*/ enhancer);
+
+library.add(fab, fas, far);
+
+const theme = createMuiTheme({
+  palette: {
+    primary: blue,
+    secondary: pink,
+  },
+});
+
+ReactDOM.render(
+  <MuiThemeProvider theme={theme}>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Top}/>
+          <Route exact path="/login" component={Login}/>
+          {/*<Route exact path="/register" component={Register}/>*/}
+          {/*<Route exact path="/password/reset" component={PasswordReset}/>*/}
+        </Switch>
+      </BrowserRouter>
+    </Provider>
+  </MuiThemeProvider>,
+  document.getElementById('app')
+);
