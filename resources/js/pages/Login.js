@@ -82,58 +82,19 @@ class Login extends React.Component {
             <Typography component="h1" variant="h5">
               ログイン
             </Typography>
-            <form className={classes.form} noValidate>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <Box className={classes.box}>
-                <FormControlLabel
-                  control={<Checkbox value="remember" />}
-                  label="記憶する"
-                />
-              </Box>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              <Link
+                href="/login/qiita"
+                color="textPrimary"
               >
-                ログイン
-              </Button>
-              <Box className={classes.box + " " + classes.row}>
-                アカウントを持っていない場合は
-                <RouterLink to="/register" className={classes.link} >
-                  <Link component="span">会員登録</Link>
-                </RouterLink>から
-              </Box>
-              <Box className={classes.box + " " + classes.row}>
-                <RouterLink to="/password/reset" className={classes.link} >
-                  <Link component="span">
-                    パスワードを忘れた場合
-                  </Link>
-                </RouterLink>
-              </Box>
-            </form>
+                Qiitaアカウントでログイン
+              </Link>
+            </Button>
           </div>
         </Container>
 

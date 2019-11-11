@@ -19,7 +19,7 @@ import {library} from '@fortawesome/fontawesome-svg-core'
 import {fab} from '@fortawesome/free-brands-svg-icons'
 import {fas} from '@fortawesome/free-solid-svg-icons'
 import {far} from '@fortawesome/free-regular-svg-icons'
-import {pink, blue} from '@material-ui/core/colors'
+import {pink, green} from '@material-ui/core/colors'
 
 import Top from './pages/Top'
 import Login from './pages/Login'
@@ -31,7 +31,7 @@ library.add(fab, fas, far);
 
 const theme = createMuiTheme({
   palette: {
-    primary: blue,
+    primary: green,
     secondary: pink,
   },
 });
