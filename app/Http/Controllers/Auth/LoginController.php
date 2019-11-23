@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\SnsAccount;
-use App\Repositories\User;
+use App\Services\SnsAccountServiceInterface;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -34,17 +32,23 @@ class LoginController extends Controller
 	protected $redirectTo = '/';
 
 	/**
+	 * @var
+	 */
+	private $snsAccountService;
+
+	/**
 	 * Create a new controller instance.
 	 *
-	 * @return void
+	 * @param SnsAccountServiceInterface $snsAccountService
 	 */
-	public function __construct()
+	public function __construct(SnsAccountServiceInterface $snsAccountService)
 	{
 		$this->middleware('guest')->except('logout');
+		$this->snsAccountService = $snsAccountService;
 	}
 
 	/**
-	 * @return \Illuminate\Http\Response
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
 	 */
 	public function redirectToProvider()
 	{
@@ -52,30 +56,24 @@ class LoginController extends Controller
 	}
 
 	/**
+	 * @param Request $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function handleProviderCallback()
+	public function handleProviderCallback(Request $request)
 	{
 		$providerUser = Socialite::driver('qiita')->user();
-
-		$snsAccount = SnsAccount::where('provider_user_id', $providerUser->getId())->first();
+		$snsAccount = $this->snsAccountService->findSnsAccountById($providerUser->getId());
 		if ($snsAccount) {
 			Auth::login($snsAccount->user, true);
 			return redirect('/');
 		}
 
-		$user = new User();
-		$user->unique_id = $providerUser->getNickname();
-		$user->name = $providerUser->getName();
-		$user->avatar = $providerUser->getAvatar();
-
-		$snsAccount = new SnsAccount();
-		$snsAccount->provider_user_id = $providerUser->getId();
-
-		DB::transaction(function () use ($user, $snsAccount) {
-			$user->save();
-			$user->snsAccounts()->save($snsAccount);
-		});
+		$user = $this->snsAccountService->createSnsAccount(
+			$providerUser->getId(),
+			$providerUser->getName(),
+			$providerUser->getNickname(),
+			$providerUser->getAvatar()
+		);
 
 		Auth::login($user, true);
 		return redirect('/');

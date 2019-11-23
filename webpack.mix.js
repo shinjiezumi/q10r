@@ -13,8 +13,9 @@ const mix = require('laravel-mix');
 
 mix.react('resources/js/app.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css');
-  // .browserSync({
-  //   files: 'resources/js/',
-  //   proxy: 'localhost:8082',
-  //   open: false
-  // });
+
+mix.browserSync({
+  files: 'resources/js/',
+  proxy: 'localhost:8082',
+  open: false,
+});

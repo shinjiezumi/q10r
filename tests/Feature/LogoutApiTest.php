@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Repositories\User;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\UserTrait;
 
 class LogoutApiTest extends TestCase
 {
 	use RefreshDatabase;
+	use UserTrait;
 
 	private $user;
 
@@ -18,7 +18,7 @@ class LogoutApiTest extends TestCase
 		parent::setUp();
 
 		// テストユーザー作成
-		$this->user = factory(User::class)->create();
+		$this->user = $this->createUser();
 	}
 
 	/**

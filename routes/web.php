@@ -10,8 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('login/qiita', 'Auth\LoginController@redirectToProvider');
-Route::get('login/qiita/callback', 'Auth\LoginController@handleProviderCallback');
+Route::get('login/qiita', 'Auth\LoginController@redirectToProvider')->name('qiita');
+Route::get('login/qiita/callback', 'Auth\LoginController@handleProviderCallback')->name('qiitaCallback');
 
 Route::get('/{any?}', function () {
     return view('app');

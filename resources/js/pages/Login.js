@@ -1,122 +1,56 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
+import Header from '../components/Header'
 import Footer from "../components/Footer";
-import {connect} from "react-redux";
-import {Field, reduxForm} from 'redux-form';
 import {
   Box,
   Button,
-  Checkbox,
   Container,
-  CssBaseline,
-  FormControlLabel,
   Link,
-  TextField,
-  Typography,
-  withStyles,
+  makeStyles,
 } from "@material-ui/core";
-import {compose} from "recompose";
-import {Link as RouterLink} from 'react-router-dom';
+import {APP_NAME} from "../constants";
 
-const styles = {
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  },
-  content: {
-    flex: '1 0 auto'
-  },
+const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
       backgroundColor: '#FFF',
     },
   },
-  box: {
-    textAlign: 'center',
-  },
-  link: {
-    textDecoration: 'none'
-  },
-  paper: {
-    marginTop: '10px',
+  main: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    // height: '100vh',
+    textAlign: 'center'
   },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: '10px',
+  content: {
+    flex: '1 0 auto'
   },
-  row: {
-    margin: '1rem',
-  },
-  submit: {
-    marginTop: '10px',
-  },
-};
-
-
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.onSubmit = this.onSubmit.bind(this);
+  button: {
+    width: '300px'
   }
+}));
 
-  async onSubmit(values) {
-    // todo
-    // await this.props.postEvent(values);
-    // this.props.history.push('/')
-  }
+export default function Login() {
+  const classes = useStyles();
 
-  render() {
-    const {handleSubmit, pristine, submitting, invalid} = this.props;
-    const classes = this.props.classes;
-
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <Navbar conponent="header"/>
-        <Container component="main" maxWidth="xs" className={classes.main}>
-          <div className={classes.paper}>
-            <Typography component="h1" variant="h5">
-              ログイン
-            </Typography>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              <Link
-                href="/login/qiita"
-                color="textPrimary"
-              >
+  return (
+    <React.Fragment>
+      <Header conponent="header"/>
+      <Box component="main">
+        <Container className={classes.main}>
+          <Box m={10}>
+            {APP_NAME}を利用するためにはQiitaアカウントでログインする必要があります。
+          </Box>
+          <Box mb={20}>
+            <Button variant="contained" color="primary" className={classes.button}>
+              <Link href="/login/qiita" color="textSecondary">
                 Qiitaアカウントでログイン
               </Link>
             </Button>
-          </div>
+          </Box>
         </Container>
-
-        {/*<Container>*/}
-        {/*  <form onSubmit={handleSubmit(this.onSubmit())}>*/}
-        {/*  </form>*/}
-        {/*</Container>*/}
-        <Footer/>
-      </React.Fragment>
-    )
-  }
+      </Box>
+      <Footer/>
+    </React.Fragment>
+  )
 }
-
-const validate = values => {
-  const errors = {};
-
-  if (!values.title) errors.title = 'Enter a title, please.';
-  if (!values.body) errors.body = 'Enter a body, please.';
-
-  return errors;
-};
-
-const enhance = compose(connect(null, null), reduxForm({validate, form: 'loginForm'}), withStyles(styles));
-
-export default enhance(Login)

@@ -19,20 +19,19 @@ import {library} from '@fortawesome/fontawesome-svg-core'
 import {fab} from '@fortawesome/free-brands-svg-icons'
 import {fas} from '@fortawesome/free-solid-svg-icons'
 import {far} from '@fortawesome/free-regular-svg-icons'
-import {pink, green} from '@material-ui/core/colors'
-
+import {green} from '@material-ui/core/colors'
+import reducer from './reducers'
 import Top from './pages/Top'
 import Login from './pages/Login'
 
 const enhancer = process.env.NODE_ENV === 'development' ? composeWithDevTools(applyMiddleware(thunk)) : applyMiddleware(thunk);
-const store = createStore(/*reducer,*/ enhancer);
+const store = createStore(reducer, enhancer);
 
 library.add(fab, fas, far);
 
 const theme = createMuiTheme({
   palette: {
     primary: green,
-    secondary: pink,
   },
 });
 
@@ -43,8 +42,6 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={Top}/>
           <Route exact path="/login" component={Login}/>
-          {/*<Route exact path="/register" component={Register}/>*/}
-          {/*<Route exact path="/password/reset" component={PasswordReset}/>*/}
         </Switch>
       </BrowserRouter>
     </Provider>

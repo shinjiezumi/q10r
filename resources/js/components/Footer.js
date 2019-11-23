@@ -1,6 +1,6 @@
 import React from "react"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
-import {Container, makeStyles} from "@material-ui/core";
+import {Box, Container, makeStyles} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   footer: {
@@ -51,27 +51,29 @@ export default function Footer() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.footer} component="footer">
-      <div className={classes.footerWrap}>
-        <div className={classes.footerCopyright}>
-          <span>&copy; 2019</span>
-          <a href="https://s9i.work" className={classes.copyrightLink}>shinjiezumi</a>
+    <Box component="footer">
+      <Container className={classes.footer}>
+        <div className={classes.footerWrap}>
+          <div className={classes.footerCopyright}>
+            <span>&copy; 2019</span>
+            <a href="https://s9i.work" className={classes.copyrightLink}>shinjiezumi</a>
+          </div>
+          <div>
+            <ul className={classes.footerSnsList}>
+              <li>
+                <a href="https://twitter.com/shinjiezumi" target="_blank">
+                  <FontAwesomeIcon icon={['fab', 'twitter']} className={classes.snsIcon}/>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/shinjiezumi" target="_blank">
+                  <FontAwesomeIcon icon={['fab', 'github']} className={classes.snsIcon}/>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div>
-          <ul className={classes.footerSnsList}>
-            <li>
-              <a href="https://twitter.com/shinjiezumi" target="_blank">
-                <FontAwesomeIcon icon={['fab', 'twitter']} className={classes.snsIcon}/>
-              </a>
-            </li>
-            <li>
-              <a href="https://github.com/shinjiezumi" target="_blank">
-                <FontAwesomeIcon icon={['fab', 'github']} className={classes.snsIcon}/>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </Container>
+      </Container>
+    </Box>
   )
 }

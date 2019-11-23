@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\SnsAccountService;
+use App\Services\SnsAccountServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
     }
 
     /**
@@ -23,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+		$this->app->bind(
+			SnsAccountServiceInterface::class,
+			SnsAccountService::class
+		);
     }
 }
