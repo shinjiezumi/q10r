@@ -5,7 +5,6 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use Illuminate\Support\Facades\Log;
 
 class QiitaApiService implements QiitaApiServiceInterface
 {
@@ -28,19 +27,10 @@ class QiitaApiService implements QiitaApiServiceInterface
 			'base_uri' => self::API_ROOT,
 		]);
 		$requestParams = [
-			'debug' => true,
-			'headers' => [
-				'Content-Type' => 'application/json',
-			],
-			RequestOptions::JSON => array_merge([
-				'client_id' => env('QIITA_CLIENT_ID'),
-				'client_secret' => env('QIITA_CLIENT_SECRET'),
-			], $params)
+			RequestOptions::JSON => $params
 		];
-		Log::debug(var_export($requestParams, true));
 
 		$response = $client->request($method, $path, $requestParams);
-		Log::debug((string)$response->getBody());
 
 		return json_decode($response->getBody()->getContents(), true);
 	}

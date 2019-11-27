@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Services\QiitaApiService;
 use App\Services\QiitaApiServiceInterface;
-use App\Services\SnsAccountService;
-use App\Services\SnsAccountServiceInterface;
+use App\Services\QiitaAccountService;
+use App\Services\QiitaAccountServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,13 +26,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-		$this->app->bind(
-			SnsAccountServiceInterface::class,
-			SnsAccountService::class
-		);
-		$this->app->bind(
-			QiitaApiServiceInterface::class,
-			QiitaApiService::class
-		);
+        $this->app->bind(
+            QiitaAccountServiceInterface::class,
+            QiitaAccountService::class
+        );
+        $this->app->bind(
+            QiitaApiServiceInterface::class,
+            QiitaApiService::class
+        );
     }
 }

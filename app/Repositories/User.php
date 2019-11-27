@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -37,8 +36,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function snsAccounts()
+    public function qiitaAccounts()
 	{
-		return $this->hasMany(SnsAccount::class);
+		return $this->hasMany(QiitaAccount::class);
 	}
 }

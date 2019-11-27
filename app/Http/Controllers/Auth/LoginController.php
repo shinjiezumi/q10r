@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\QiitaApiServiceInterface;
-use App\Services\SnsAccountServiceInterface;
+use App\Services\QiitaAccountServiceInterface;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,23 +35,23 @@ class LoginController extends Controller
 	/**
 	 * @var
 	 */
-	private $snsAccountService;
+	private $qiitaAccountService;
 
 	/**
 	 * @var
 	 */
 	private $qiitaApiService;
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @param SnsAccountServiceInterface $snsAccountService
-	 * @param QiitaApiServiceInterface $qiitaApiService
-	 */
-	public function __construct(SnsAccountServiceInterface $snsAccountService, QiitaApiServiceInterface $qiitaApiService)
+    /**
+     * Create a new controller instance.
+     *
+     * @param QiitaAccountServiceInterface $qiitaAccountService
+     * @param QiitaApiServiceInterface $qiitaApiService
+     */
+	public function __construct(QiitaAccountServiceInterface $qiitaAccountService, QiitaApiServiceInterface $qiitaApiService)
 	{
 		$this->middleware('guest')->except('logout');
-		$this->snsAccountService = $snsAccountService;
+		$this->qiitaAccountService = $qiitaAccountService;
 		$this->qiitaApiService = $qiitaApiService;
 	}
 
@@ -70,25 +70,14 @@ class LoginController extends Controller
 	public function handleProviderCallback(Request $request)
 	{
 		$providerUser = Socialite::driver('qiita')->user();
-		$snsAccount = $this->snsAccountService->findSnsAccountById($providerUser->getId());
-
-		$params = [
-			'code' => $request->get('code')
-		];
-		$response = $this->qiitaApiService->callApi('post', '/api/v2/access_tokens', $params);
-		dd($response);
-
-		if ($snsAccount) {
-			Auth::login($snsAccount->user, true);
+        $qiitaAccount = $this->qiitaAccountService->findAccountById($providerUser->getId());
+		if ($qiitaAccount) {
+		    $this->qiitaAccountService->storeAccessToken($qiitaAccount, $providerUser);
+			Auth::login($qiitaAccount->user, true);
 			return redirect('/');
 		}
 
-		$user = $this->snsAccountService->createSnsAccount(
-			$providerUser->getId(),
-			$providerUser->getName(),
-			$providerUser->getNickname(),
-			$providerUser->getAvatar()
-		);
+		$user = $this->qiitaAccountService->createAccount($providerUser);
 
 		Auth::login($user, true);
 		return redirect('/');
