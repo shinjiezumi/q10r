@@ -8,7 +8,7 @@ use App\Repositories\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 
-class QiitaAccountService implements QiitaAccountServiceInterface
+class QiitaService implements QiitaServiceInterface
 {
 	/**
 	 * @param string $id

@@ -6,7 +6,7 @@ use App\Repositories\QiitaAccount;
 use App\Repositories\User;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 
-interface QiitaAccountServiceInterface
+interface QiitaServiceInterface
 {
 	/**
 	 * @param string $id

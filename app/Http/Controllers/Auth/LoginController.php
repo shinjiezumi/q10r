@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\QiitaApiServiceInterface;
-use App\Services\QiitaAccountServiceInterface;
+use App\Services\QiitaServiceInterface;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +35,7 @@ class LoginController extends Controller
 	/**
 	 * @var
 	 */
-	private $qiitaAccountService;
+	private $qiitaService;
 
 	/**
 	 * @var
@@ -45,13 +45,13 @@ class LoginController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param QiitaAccountServiceInterface $qiitaAccountService
+     * @param QiitaServiceInterface $qiitaService
      * @param QiitaApiServiceInterface $qiitaApiService
      */
-	public function __construct(QiitaAccountServiceInterface $qiitaAccountService, QiitaApiServiceInterface $qiitaApiService)
+	public function __construct(QiitaServiceInterface $qiitaService, QiitaApiServiceInterface $qiitaApiService)
 	{
 		$this->middleware('guest')->except('logout');
-		$this->qiitaAccountService = $qiitaAccountService;
+		$this->qiitaService = $qiitaService;
 		$this->qiitaApiService = $qiitaApiService;
 	}
 
@@ -70,14 +70,14 @@ class LoginController extends Controller
 	public function handleProviderCallback(Request $request)
 	{
 		$providerUser = Socialite::driver('qiita')->user();
-        $qiitaAccount = $this->qiitaAccountService->findAccountById($providerUser->getId());
+        $qiitaAccount = $this->qiitaService->findAccountById($providerUser->getId());
 		if ($qiitaAccount) {
-		    $this->qiitaAccountService->storeAccessToken($qiitaAccount, $providerUser);
+		    $this->qiitaService->storeAccessToken($qiitaAccount, $providerUser);
 			Auth::login($qiitaAccount->user, true);
 			return redirect('/');
 		}
 
-		$user = $this->qiitaAccountService->createAccount($providerUser);
+		$user = $this->qiitaService->createAccount($providerUser);
 
 		Auth::login($user, true);
 		return redirect('/');
