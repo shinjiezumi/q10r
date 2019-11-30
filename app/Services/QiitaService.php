@@ -5,14 +5,28 @@ namespace App\Services;
 use App\Repositories\QiitaAccount;
 use App\Repositories\QiitaApiToken;
 use App\Repositories\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 
 class QiitaService implements QiitaServiceInterface
 {
-	/**
-	 * @param string $id
-	 * @return mixed
+    /**
+     * @var
+     */
+    private $qiitaApiService;
+
+    /**
+     * QiitaService constructor.
+     * @param QiitaApiServiceInterface $qiitaApiService
+     */
+    public function __construct(QiitaApiServiceInterface $qiitaApiService)
+    {
+        $this->qiitaApiService = $qiitaApiService;
+    }
+
+    /**
+	 * {@inheritDoc}
 	 */
 	public function findAccountById(string $id)
 	{
@@ -20,8 +34,7 @@ class QiitaService implements QiitaServiceInterface
 	}
 
     /**
-     * @param SocialiteUser $providerUser
-     * @return User
+     * {@inheritDoc}
      */
 	public function createAccount(SocialiteUser $providerUser): User
 	{
@@ -46,11 +59,21 @@ class QiitaService implements QiitaServiceInterface
 	}
 
     /**
-     * @param QiitaAccount $qiitaAccount
-     * @param SocialiteUser $providerUser
+     * {@inheritDoc}
      */
     public function storeAccessToken(QiitaAccount $qiitaAccount, SocialiteUser $providerUser): void
     {
         $qiitaAccount->qiitaApiToken()->update(['token' => $providerUser->token]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getItems($params): array
+    {
+        $user = Auth::user();
+        $path = "/api/v2/users/{$user->getName()}/stocks";
+
+        return $this->qiitaApiService->callApi('get', $path, $params);
     }
 }

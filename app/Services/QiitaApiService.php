@@ -5,6 +5,8 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class QiitaApiService implements QiitaApiServiceInterface
 {
@@ -23,15 +25,32 @@ class QiitaApiService implements QiitaApiServiceInterface
 	 */
 	public function callApi(string $method, string $path, array $params) :array
 	{
+	    $user = Auth::user();
+
 		$client = new Client([
 			'base_uri' => self::API_ROOT,
 		]);
 		$requestParams = [
-			RequestOptions::JSON => $params
+		    'headers' => [
+                'Authorization' => 'Bearer ' . $user->getToken()
+            ],
+			RequestOptions::QUERY => $params
 		];
 
-		$response = $client->request($method, $path, $requestParams);
-
+		try {
+            $response = $client->request($method, $path, $requestParams);
+        } catch (\Exception $e) {
+            $this->logging([
+                'method' => $method,
+                'path' => $path,
+                'params' => $requestParams
+            ]);
+        }
 		return json_decode($response->getBody()->getContents(), true);
 	}
+
+	private function logging($logInfo)
+    {
+        Log::error("[ERROR] API call error:" . var_export($logInfo, true));
+    }
 }
