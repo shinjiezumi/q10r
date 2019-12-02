@@ -2,7 +2,7 @@
 
 namespace Tests\Traits;
 
-use App\Repositories\SnsAccount;
+use App\Repositories\QiitaAccount;
 use App\Repositories\User;
 use Illuminate\Support\Facades\DB;
 
@@ -15,12 +15,12 @@ trait UserTrait
 		$user->nickname = 'hogehoge';
 		$user->avatar = 'https://example.com/hoge.png';
 
-		$snsAccount = new SnsAccount();
-		$snsAccount->provider_user_id = 'provider';
+		$qiitaAccount = new QiitaAccount();
+		$qiitaAccount->qiita_user_id = 'provider';
 
-		DB::transaction(function () use ($user, $snsAccount) {
+		DB::transaction(function () use ($user, $qiitaAccount) {
 			$user->save();
-			$user->snsAccounts()->save($snsAccount);
+			$user->qiitaAccounts()->save($qiitaAccount);
 		});
 
 		return $user;

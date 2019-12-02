@@ -37,8 +37,8 @@ class LoginControllerTest extends TestCase
 		$this->assertSame('hoge', $user->name);
 		$this->assertSame('https://example.com/avatar.png', $user->avatar);
 
-		$snsAccount = $user->snsAccounts()->first();
-		$this->assertSame('id1', $snsAccount->provider_user_id);
+		$snsAccount = $user->qiitaAccounts()->first();
+		$this->assertSame('id1', $snsAccount->qiita_user_id);
 		$this->assertAuthenticated();
 	}
 
@@ -74,6 +74,7 @@ class LoginControllerTest extends TestCase
 			->shouldReceive('getName')->andReturn($name)
 			->shouldReceive('getNickname')->andReturn($nickName)
 			->shouldReceive('getAvatar')->andReturn($avatar);
+		$this->mockUser->token = 'hogetoken';
 
 		$this->mockProvider = \Mockery::mock('Laravel\Socialite\Contracts\Provider');
 		$this->mockProvider->shouldReceive('user')->andReturn($this->mockUser);
