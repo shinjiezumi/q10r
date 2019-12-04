@@ -18,4 +18,4 @@ mix.browserSync({
   files: 'resources/js/',
   proxy: 'localhost:8082',
   open: false,
-});
+}).version();
