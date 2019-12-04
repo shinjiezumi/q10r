@@ -2,13 +2,26 @@ import React from 'react'
 import _ from "lodash"
 import Header from '../components/Header'
 import Footer from "../components/Footer";
-import {Box, Container, CssBaseline, Link, Typography, withStyles} from "@material-ui/core";
+import {Box, Container, CssBaseline, Link, Grid, Typography, withStyles, Input} from "@material-ui/core";
+import {
+  CategoryRounded,
+  FolderTwoTone,
+  LabelRounded,
+  LocalOfferRounded, SearchRounded
+} from "@material-ui/icons";
+import Pagination from "material-ui-flat-pagination";
 import {connect} from "react-redux";
 import {compose} from "recompose";
 import {getItems} from "../actions/qiita";
 import moment from "moment";
 
 const styles = {
+  mr05: {
+    marginRight: '.5rem',
+  },
+  tas: {
+    textAlign: 'center',
+  },
   main: {
     display: 'flex',
   },
@@ -16,16 +29,19 @@ const styles = {
     flex: '1 0 auto',
   },
   box: {
-    padding: '2rem',
+    padding: '1rem',
   },
   listItem: {
     display: 'flex',
+    padding: '.5rem'
   },
   item: {
     display: 'flex',
-    padding: '2rem'
+    padding: '1rem',
   },
-  user: {},
+  user: {
+    marginRight: '.5rem',
+  },
   avatar: {
     width: '3rem',
     height: '3rem',
@@ -34,22 +50,39 @@ const styles = {
     width: '100%',
     height: '100%',
   },
-  userName: {
-    fontSize: '1rem',
-  },
   itemContent: {},
-  title: {
-    fontSize: '2rem',
+  title: {},
+  tags: {
+    padding: '.2rem',
+    fontSize: '.7rem',
+    display: 'flex',
   },
   tagList: {
     display: 'flex',
   },
   tagListItem: {
     listStyle: 'none',
-  }
+  },
+  tag: {
+    marginRight: '.5rem',
+    padding: '.2rem',
+    backgroundColor: '#d4d2d2',
+    color: '#000',
+    '&:before': {
+      width: '1rem',
+      height: '1rem',
+      backgroundColor: '#d4d2d2',
+      transform: 'rotate(45deg)',
+      content: '""',
+    }
+  },
 };
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {offset: 0}
+  }
   componentDidMount() {
     this.props.getItems();
   }
@@ -60,34 +93,33 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <Box className={classes.box}>
-          <input type="search" placeholder="検索"/>
+          <Typography component="h2" variant="h6">
+            <FolderTwoTone/>ストック一覧
+          </Typography>
         </Box>
         <Box className={classes.box}>
-          <h3>カテゴリー</h3>
+          <Typography component="h3" variant="subtitle1"><SearchRounded/>ストック内検索</Typography>
+          <Input type="search" placeholder="検索"/>
+        </Box>
+        <Box className={classes.box}>
+          <Typography component="h3" variant="subtitle1"><CategoryRounded/>QMカテゴリー</Typography>
           <ul>
             <li className={classes.listItem}>
-              <div>
+              <div className={classes.mr05}>
                 <img src="https://placehold.jp/16x16.png" alt=""/>
               </div>
-              <div>Javascript</div>
+              <div className={classes.mr05}>Javascript</div>
               <div>20</div>
-            </li>
-            <li className={classes.listItem}>
-              <div>
-                <img src="https://placehold.jp/16x16.png" alt=""/>
-              </div>
-              <div>Docker</div>
-              <div>10</div>
             </li>
           </ul>
         </Box>
         <Box className={classes.box}>
-          <h3>タグ</h3>
+          <Typography component="h3" variant="subtitle1"><LocalOfferRounded/>QMタグ</Typography>
           <li className={classes.listItem}>
-            <div>
+            <div className={classes.mr05}>
               <img src="https://placehold.jp/16x16.png" alt=""/>
             </div>
-            <div>Javascript</div>
+            <div className={classes.mr05}>Javascript</div>
             <div>20</div>
           </li>
           <li className={classes.listItem}>
@@ -99,20 +131,13 @@ class Home extends React.Component {
           </li>
         </Box>
         <Box className={classes.box}>
-          <h3>Qiitaタグ</h3>
+          <Typography component="h3" variant="subtitle1"><LabelRounded/>タグ</Typography>
           <li className={classes.listItem}>
-            <div>
+            <div className={classes.mr05}>
               <img src="https://placehold.jp/16x16.png" alt=""/>
             </div>
-            <div>Javascript</div>
+            <div className={classes.mr05}>Javascript</div>
             <div>20</div>
-          </li>
-          <li className={classes.listItem}>
-            <div>
-              <img src="https://placehold.jp/16x16.png" alt=""/>
-            </div>
-            <div>Docker</div>
-            <div>10</div>
           </li>
         </Box>
       </React.Fragment>
@@ -122,39 +147,69 @@ class Home extends React.Component {
   renderItems() {
     const {classes, items} = this.props;
 
-    const renderTags = (tags) => {
-      return _.map(tags, tag => (
-        <li className={classes.tagListItem} key={tag.name}>
-          <Link href={`https://qiita.com/tags/${tag.name}`} target="_blank">{tag.name}</Link>
-        </li>
-      ));
+    const renderTags = (item) => {
+      return (
+        <div className={classes.tags}>
+          <ul className={classes.tagList}>
+            {_.map(item.tags, tag => (
+              <li className={classes.tagListItem} key={tag.name}>
+                <Link href={`https://qiita.com/tags/${tag.name}`} target="_blank">
+                  <span className={classes.tag}>{tag.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
     };
 
-    return _.map(items, item => (
-      <Box className={classes.item} key={item.id}>
-        <div className={classes.user}>
-          <div className={classes.avatar}>
-            <img src={item.user.profile_image_url} alt="" className={classes.avatarImg}/>
+    return _.map(items, (item, i) => (
+      <Box key={item.id}>
+        <div className={classes.item}>
+          <div className={classes.user}>
+            <div className={classes.avatar}>
+              <img src={item.user.profile_image_url} alt="" className={classes.avatarImg}/>
+            </div>
+          </div>
+          <div className={classes.itemContent}>
+            <div>
+              <Link href={`https://qiita.com/${item.user.id}`} target="_blank">{item.user.id}</Link>
+              が
+              {moment(item.created_at).format('YYYY/MM/DD')}
+              に投稿
+            </div>
+            <Typography component="h2" variant="subtitle1">
+              <Link href={item.url} target='_blank'>{item.title}</Link>
+            </Typography>
+            {renderTags(item)}
           </div>
         </div>
-        <div className={classes.itemContent}>
-          <div className={classes.userName}>
-            <Link href={`https://qiita.com/${item.user.id}`} target="_blank">{item.user.id}</Link>
-            が
-            {moment(item.created_at).format('YYYY/MM/DD')}
-            に投稿
-          </div>
-          <Typography component="h2" variant="h5" className={classes.title}>
-            <Link href={item.url} target='_blank' color='inherit'>{item.title}</Link>
-          </Typography>
-          <div>
-            <ul className={classes.tagList}>
-              {renderTags(item.tags)}
-            </ul>
-          </div>
-        </div>
+        {
+          items.length !== (i + 1) && (
+            <hr/>
+          )
+        }
       </Box>
     ));
+  }
+
+  handlePaginate(offset) {
+    this.setState({offset})
+  }
+
+  renderPagination() {
+    const {classes} = this.props;
+    const className = [classes.box, classes.tas].join(' ');
+    return (
+      <Box className={className}>
+        <Pagination
+          limit={10}
+          offset={this.state.offset}
+          total={100}
+          onClick={(e, offset) => this.handlePaginate(offset)}
+        />
+      </Box>
+    );
   }
 
   render() {
@@ -165,12 +220,15 @@ class Home extends React.Component {
         <CssBaseline/>
         <Header/>
         <Container component="main" className={classes.main}>
-          <Box key='filterMenu'>
-            {this.renderFilterMenu()}
-          </Box>
-          <Box key='items'>
-            {this.renderItems()}
-          </Box>
+          <Grid container>
+            <Grid item xs={12} sm={3}>
+              {this.renderFilterMenu()}
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              {this.renderItems()}
+              {this.renderPagination()}
+            </Grid>
+          </Grid>
         </Container>
         <Footer/>
       </React.Fragment>
