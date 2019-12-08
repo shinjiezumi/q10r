@@ -32,3 +32,9 @@ services:
     environment:
       TZ: Asia/Tokyo
       MYSQL_ROOT_PASSWORD: root
+  redis:
+    build: docker/redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data/:/data
