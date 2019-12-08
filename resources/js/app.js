@@ -23,6 +23,7 @@ import {green} from '@material-ui/core/colors'
 import reducer from './reducers'
 import Top from './pages/Top'
 import Login from './pages/Login'
+import QiitaImport from './pages/QiitaImport'
 
 const enhancer = process.env.NODE_ENV === 'development' ? composeWithDevTools(applyMiddleware(thunk)) : applyMiddleware(thunk);
 const store = createStore(reducer, enhancer);
@@ -42,6 +43,7 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={Top}/>
           <Route exact path="/login" component={Login}/>
+          {/*<Route exact path="/qiitaImport" component={QiitaImport}/>*/}
         </Switch>
       </BrowserRouter>
     </Provider>

@@ -2,7 +2,17 @@ import React from 'react'
 import _ from "lodash"
 import Header from '../components/Header'
 import Footer from "../components/Footer";
-import {Box, Container, CssBaseline, Link, Grid, Typography, withStyles, Input} from "@material-ui/core";
+import {
+  Box,
+  Container,
+  CssBaseline,
+  Link,
+  Grid,
+  Typography,
+  withStyles,
+  Input,
+  CircularProgress, Snackbar
+} from "@material-ui/core";
 import {
   CategoryRounded,
   FolderTwoTone,
@@ -12,14 +22,15 @@ import {
 import Pagination from "material-ui-flat-pagination";
 import {connect} from "react-redux";
 import {compose} from "recompose";
-import {getItems} from "../actions/qiita";
+import {getItems, removeNotice} from "../actions/qiita";
 import moment from "moment";
+import MySnackbarContentWrapper from "../components/Notice";
 
 const styles = {
   mr05: {
     marginRight: '.5rem',
   },
-  tas: {
+  tac: {
     textAlign: 'center',
   },
   main: {
@@ -81,10 +92,21 @@ const styles = {
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {offset: 0}
+    this.state = {
+      offset: 0,
+    };
+    this.handleClose = this.handleClose.bind(this);
   }
+
   componentDidMount() {
     this.props.getItems();
+  }
+
+  handleClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.props.removeNotice();
   }
 
   renderFilterMenu() {
@@ -145,7 +167,15 @@ class Home extends React.Component {
   }
 
   renderItems() {
-    const {classes, items} = this.props;
+    const {classes, items, isLoading, error} = this.props;
+
+    if (isLoading) {
+      return (
+        <Box mt={20} className={classes.tac}>
+          <CircularProgress />
+        </Box>
+      )
+    }
 
     const renderTags = (item) => {
       return (
@@ -198,8 +228,12 @@ class Home extends React.Component {
   }
 
   renderPagination() {
-    const {classes} = this.props;
-    const className = [classes.box, classes.tas].join(' ');
+    const {classes, isLoading, error} = this.props;
+    const className = [classes.box, classes.tac].join(' ');
+
+    if (isLoading || error) {
+      return ""
+    }
     return (
       <Box className={className}>
         <Pagination
@@ -213,7 +247,7 @@ class Home extends React.Component {
   }
 
   render() {
-    const {classes} = this.props;
+    const {classes, isNotice, error} = this.props;
 
     return (
       <React.Fragment>
@@ -225,8 +259,26 @@ class Home extends React.Component {
               {this.renderFilterMenu()}
             </Grid>
             <Grid item xs={12} sm={9}>
-              {this.renderItems()}
-              {this.renderPagination()}
+              {
+                error && (
+                  <Snackbar
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    }}
+                    open={isNotice}
+                  >
+                    <MySnackbarContentWrapper
+                      variant="error"
+                      m={10}
+                      message={error}
+                      onClose={this.handleClose}
+                    />
+                  </Snackbar>
+                )
+              }
+              {!error && this.renderItems()}
+              {!error && this.renderPagination()}
             </Grid>
           </Grid>
         </Container>
@@ -236,8 +288,13 @@ class Home extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({items: state.items});
-const mapDispatchToProps = ({getItems});
+const mapStateToProps = state => ({
+  isLoading: state.qiita.isLoading,
+  isNotice: state.qiita.isNotice,
+  items: state.qiita.items,
+  error: state.qiita.error
+});
+const mapDispatchToProps = ({getItems, removeNotice});
 const enhance = compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles));
 
 export default enhance(Home);
