@@ -13,7 +13,15 @@ class Authenticatable extends BaseAuthenticatable
         return $this->name;
     }
 
-    /**
+	/**
+	 * @return mixed
+	 */
+	public function getQiitaUserId()
+	{
+		return $this->qiita_user_id;
+	}
+
+	/**
      * @return mixed
      */
     public function getToken()

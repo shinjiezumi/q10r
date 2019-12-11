@@ -31,4 +31,10 @@ interface QiitaServiceInterface
      * @return array
      */
 	public function getItems($params) :array;
+
+	/**
+	 * @param $params
+	 * @return array
+	 */
+	public function import($params) :array;
 }

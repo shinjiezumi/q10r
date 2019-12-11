@@ -18,3 +18,4 @@ Route::get('/user', function () {
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/items', 'QiitaController@getItems')->name('getItems');
+Route::post('/importQiita', 'QiitaController@import')->name('import');

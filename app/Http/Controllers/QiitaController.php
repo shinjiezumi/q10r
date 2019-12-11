@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ImportQiita;
 use App\Services\QiitaServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class QiitaController extends Controller
 {
@@ -31,4 +33,13 @@ class QiitaController extends Controller
 
         return $this->qiitaService->getItems($params);
     }
+
+    public function import(Request $request)
+	{
+		$user = Auth::User();
+		ImportQiita::dispatchNow([
+			'user_id' => $user->id,
+			'qiita_user_id' => $user->getQiitaUserId()
+		]);
+	}
 }

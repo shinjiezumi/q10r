@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\AccountCreated;
 use App\Repositories\QiitaAccount;
 use App\Repositories\QiitaApiToken;
 use App\Repositories\User;
@@ -53,6 +54,12 @@ class QiitaService implements QiitaServiceInterface
 			$user->save();
 			$user->qiitaAccounts()->save($qiitaAccount);
 			$qiitaAccount->qiitaApiToken()->save($qiitaApiToken);
+
+			$data = [
+				'user_id' => $user->id,
+				'qiita_user_id' => $qiitaAccount->qiita_user_id
+			];
+			event(new AccountCreated($data));
 		});
 
 		return $user;
@@ -76,4 +83,12 @@ class QiitaService implements QiitaServiceInterface
 
         return $this->qiitaApiService->callApi('get', $path, $params);
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+    public function import($params): array
+	{
+
+	}
 }
