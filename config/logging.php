@@ -89,6 +89,12 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
-    ],
 
+        'qiitaapilog' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/qiita_api.log'),
+            'level' => 'info',
+            'days' => 14,
+        ]
+    ],
 ];
