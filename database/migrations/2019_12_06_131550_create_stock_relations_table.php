@@ -16,8 +16,7 @@ class CreateStockRelationsTable extends Migration
         Schema::create('stock_relations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->index();
-            $table->bigInteger('qiita_item_id');
-            $table->string('remark');
+            $table->string('qiita_item_id');
             $table->timestamps();
 
             $table->unique(['user_id', 'qiita_item_id']);

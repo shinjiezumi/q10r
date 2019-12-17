@@ -16,7 +16,7 @@ class CreateTagRelationsTable extends Migration
         Schema::create('tag_relations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
-            $table->bigInteger('qiita_item_id');
+            $table->string('qiita_item_id');
             $table->bigInteger('tag_id');
             $table->timestamps();
 
