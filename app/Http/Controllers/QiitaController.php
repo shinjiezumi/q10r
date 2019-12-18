@@ -24,22 +24,27 @@ class QiitaController extends Controller
      * @param Request $request
      * @return array
      */
-    public function getItems(Request $request)
+    public function getItems(Request $request) :array
     {
         $params = [
-            'page' => 1,
-            'per_page' => 20,
+            'page' => $request->get('page', 1),
+            'per_page' => $request->get('per_page', 10),
         ];
 
         return $this->qiitaService->getItems($params);
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function import(Request $request)
 	{
 		$user = Auth::User();
-		ImportQiita::dispatchNow([
-			'user_id' => $user->id,
-			'qiita_user_id' => $user->getQiitaUserId()
-		]);
+
+		return ImportQiita::dispatchNow([
+		    'user_id' => $user->id,
+		    'qiita_user_name' => $user->getName(),
+        ]);
 	}
 }

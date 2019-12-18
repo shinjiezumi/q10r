@@ -27,14 +27,14 @@ interface QiitaServiceInterface
 	public function storeAccessToken(QiitaAccount $qiitaAccount, SocialiteUser $providerUser) :void;
 
     /**
-     * @param $params
+     * @param array $params
      * @return array
      */
-	public function getItems($params) :array;
+	public function getItems(array $params) :array;
 
-	/**
-	 * @param $params
-	 * @return array
-	 */
-	public function import($params) :array;
+    /**
+     * @param array $data
+     * @return array
+     */
+	public function import(array $data) :array;
 }

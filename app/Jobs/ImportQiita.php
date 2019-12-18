@@ -23,25 +23,23 @@ class ImportQiita implements ShouldQueue
 	 */
     private $data;
 
-	/**
-	 * Create a new job instance.
-	 *
-	 * @param QiitaServiceInterface $qiitaService
-	 * @param array $data
-	 */
-    public function __construct(QiitaServiceInterface $qiitaService, array $data)
+    /**
+     * Create a new job instance.
+     * @param array $data
+     */
+    public function __construct(array $data)
     {
-    	$this->qiitaService = $qiitaService;
-		$this->data = $data;
+        $this->data = $data;
 	}
 
     /**
      * Execute the job.
      *
-     * @return void
+     * @param QiitaServiceInterface $qiitaService
+     * @return array
      */
-    public function handle()
+    public function handle(QiitaServiceInterface $qiitaService) :array
     {
-		$this->qiitaService->import($this->data);
+        return $qiitaService->import($this->data);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 
-use App\Exceptions\QiitaApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Auth;
@@ -18,12 +17,7 @@ class QiitaApiService implements QiitaApiServiceInterface
 	private const API_ROOT = 'https://qiita.com/';
 
     /**
-     * @param string $method
-     * @param string $path
-     * @param array $params
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws QiitaApiException
+     * {@inheritDoc}
      */
 	public function callApi(string $method, string $path, array $params) :array
 	{
@@ -39,24 +33,30 @@ class QiitaApiService implements QiitaApiServiceInterface
 			RequestOptions::QUERY => $params
 		];
 
+		$result = [];
+        $response = null;
 		try {
             $response = $client->request($method, $path, $requestParams);
         } catch (\Exception $e) {
-		    throw new QiitaApiException($e->getMessage(), $e->getCode());
+            $result['statusCode'] = $e->getCode();
+            $result['error'] = $e->getMessage();
         } finally {
-            $response = json_decode(isset($response) ? $response->getBody()->getContents() : '{}', true);
+            $contents = isset($response) ? $response->getBody()->getContents() : '{}';
             Log::channel('qiitaapilog')->info(json_encode(
                 [
                     'method' => $method,
                     'host' => self::API_ROOT,
                     'path' => $path,
                     'params' => $requestParams,
-                    'response' => $response
+                    'response' => json_decode($contents, true)
                 ],
                 JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
             ));
-		}
+            $result['statusCode'] = $response->getStatusCode();
+            $result['headers'] = $response->getHeaders();
+            $result['body'] = json_decode($contents, true);
+        }
 
-		return $response;
-	}
+        return $result;
+    }
 }

@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Events\AccountCreated;
+use App\Exceptions\QiitaApiException;
 use App\Repositories\QiitaAccount;
 use App\Repositories\QiitaApiToken;
 use App\Repositories\User;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 
@@ -76,19 +78,137 @@ class QiitaService implements QiitaServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function getItems($params): array
+    public function getItems(array $params): array
     {
-        $user = Auth::user();
-        $path = "/api/v2/users/{$user->getName()}/stocks";
+        //todo
 
-        return $this->qiitaApiService->callApi('get', $path, $params);
+        return [];
     }
 
 	/**
 	 * {@inheritDoc}
 	 */
-    public function import($params): array
+    public function import(array $data): array
 	{
+        $path = "/api/v2/users/{$data['qiita_user_name']}/stocks";
+        $params = [
+            'per_page' => 100
+        ];
 
+        // データ取得
+        $userId = $data['user_id'];
+        $allItems = collect();
+        $allUsers = collect();
+        $allRelations = [];
+        $i = 0;
+        while(1) {
+            $params['page'] = ($i + 1);
+            $response = $this->qiitaApiService->callApi('get', $path, $params);
+
+            if ($response['statusCode'] !== 200) {
+                throw new QiitaApiException($response['error'], $response['statusCode']);
+            }
+
+            $items = [];
+            $users = [];
+            $now = Carbon::now()->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+            foreach ($response['body'] as $item) {
+                $convertedItem = $this->convertItem($item);
+                $items = array_merge($items, $convertedItem['item']);
+                $users = array_merge($users, $convertedItem['user']);
+                $allRelations[] = [
+                    'user_id' => $userId,
+                    'qiita_item_id' => Arr::get($item, 'id'),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+
+            $allItems = $allItems->merge($items);
+            $allUsers = $allUsers->merge($users);
+            $i++;
+
+            if (!$this->hasNextPage($response['headers']) || $i > 100) {
+                break;
+            }
+        }
+
+        // DELETE→INSERT
+        DB::transaction(function () use ($userId, $allItems, $allUsers, $allRelations) {
+            DB::table('qiita_items')->whereIn('item_id', $allItems->keys())->delete();
+            DB::table('qiita_items')->insert($allItems->values()->toArray());
+
+            DB::table('qiita_users')->whereIn('user_id', $allUsers->keys())->delete();
+            DB::table('qiita_users')->insert($allUsers->values()->toArray());
+
+            DB::table('stock_relations')->where('user_id', $userId)->delete();
+            DB::table('stock_relations')->insert($allRelations);
+        });
+
+        return [
+            'status' => 'ok',
+            'message' => 'インポート処理が完了しました。',
+        ];
 	}
+
+    /**
+     * @param array|null $headers
+     * @return bool
+     */
+    private function hasNextPage(array $headers = null) :bool
+    {
+        if (!isset($headers['Link'])) {
+            false;
+        }
+        $links = explode(",", Arr::get($headers, "Link.0", ""));
+        $regex = "{<(https://.*)>; rel=\"(.*)\"}";
+        $pageInfo = [];
+        foreach ($links as $link) {
+            if (preg_match($regex, $link, $matches)) {
+                $pageInfo[$matches[2]] = $matches[1];
+            }
+        }
+
+        return isset($pageInfo['next']);
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     * @throws \Exception
+     */
+	private function convertItem(array $item) :array
+    {
+        $itemId = Arr::get($item, 'id');
+        $now = Carbon::now()->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        $convertedItem = [
+            $itemId => [
+                'item_id' => $itemId,
+                'item_title' => Arr::get($item, 'title'),
+                'item_url' => Arr::get($item, 'url'),
+                'item_tags' => json_encode(Arr::get($item, 'tags')),
+                'item_user_id' => Arr::get($item, 'user.id'),
+                'item_created_at' => (new Carbon(Arr::get($item, 'created_at')))->format(Carbon::DEFAULT_TO_STRING_FORMAT),
+                'item_updated_at' => (new Carbon(Arr::get($item, 'updated_at')))->format(Carbon::DEFAULT_TO_STRING_FORMAT),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ];
+
+        $userId = Arr::get($item, 'user.id');
+        $convertedUser = [
+            $userId => [
+                'user_id' => $userId,
+                'profile_image_url' => Arr::get($item, 'user.profile_image_url'),
+                'followers_count' => Arr::get($item, 'user.followers_count'),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ];
+
+        return [
+            'item' => $convertedItem,
+            'user' => $convertedUser,
+        ];
+    }
 }
