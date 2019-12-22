@@ -15,16 +15,18 @@ class CreateQiitaItemsTable extends Migration
     public function up()
     {
         Schema::create('qiita_items', function (Blueprint $table) {
-            $table->string('item_id')->primary();
-            $table->string('item_title');
-            $table->string('item_url');
-            $table->json('item_tags');
-            $table->string('item_user_id');
+            $table->bigIncrements('id');
+            $table->string('item_id');
+            $table->string('title');
+            $table->string('url');
+            $table->json('tags');
+            $table->string('user_id');
             $table->timestamp('item_created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('item_updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamps();
 
-		});
+            $table->unique('item_id');
+        });
     }
 
     /**

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTagRelationsTable extends Migration
+class CreateTagUserQiitaItemTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateTagRelationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tag_relations', function (Blueprint $table) {
+        Schema::create('tag_user_qiita_item', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id');
-            $table->string('qiita_item_id');
             $table->bigInteger('tag_id');
+            $table->bigInteger('user_qiita_item_id');
             $table->timestamps();
 
-			$table->unique(['user_id', 'qiita_item_id', 'tag_id']);
+			$table->unique(['tag_id', 'user_qiita_item_id']);
 		});
     }
 
@@ -31,6 +30,6 @@ class CreateTagRelationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tag_relations');
+        Schema::dropIfExists('tag_user_qiita_item');
     }
 }

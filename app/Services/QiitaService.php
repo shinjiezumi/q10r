@@ -6,6 +6,7 @@ use App\Events\AccountCreated;
 use App\Exceptions\QiitaApiException;
 use App\Repositories\QiitaAccount;
 use App\Repositories\QiitaApiToken;
+use App\Repositories\QiitaItem;
 use App\Repositories\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -80,8 +81,6 @@ class QiitaService implements QiitaServiceInterface
      */
     public function getItems(array $params): array
     {
-        //todo
-
         return [];
     }
 
@@ -99,7 +98,6 @@ class QiitaService implements QiitaServiceInterface
         $userId = $data['user_id'];
         $allItems = collect();
         $allUsers = collect();
-        $allRelations = [];
         $i = 0;
         while(1) {
             $params['page'] = ($i + 1);
@@ -111,17 +109,10 @@ class QiitaService implements QiitaServiceInterface
 
             $items = [];
             $users = [];
-            $now = Carbon::now()->format(Carbon::DEFAULT_TO_STRING_FORMAT);
             foreach ($response['body'] as $item) {
                 $convertedItem = $this->convertItem($item);
                 $items = array_merge($items, $convertedItem['item']);
                 $users = array_merge($users, $convertedItem['user']);
-                $allRelations[] = [
-                    'user_id' => $userId,
-                    'qiita_item_id' => Arr::get($item, 'id'),
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
             }
 
             $allItems = $allItems->merge($items);
@@ -133,16 +124,26 @@ class QiitaService implements QiitaServiceInterface
             }
         }
 
-        // DELETE→INSERT
-        DB::transaction(function () use ($userId, $allItems, $allUsers, $allRelations) {
-            DB::table('qiita_items')->whereIn('item_id', $allItems->keys())->delete();
-            DB::table('qiita_items')->insert($allItems->values()->toArray());
+        $now = Carbon::now()->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        DB::transaction(function () use ($userId, $allItems, $allUsers, $now) {
+            foreach ($allItems as $item) {
+                DB::table('qiita_items')->updateOrInsert(['item_id' => $item['item_id']], $item);
+            }
+            foreach ($allUsers as $user) {
+                DB::table('qiita_users')->updateOrInsert(['user_id' => $user['user_id']], $user);
+            }
 
-            DB::table('qiita_users')->whereIn('user_id', $allUsers->keys())->delete();
-            DB::table('qiita_users')->insert($allUsers->values()->toArray());
-
-            DB::table('stock_relations')->where('user_id', $userId)->delete();
-            DB::table('stock_relations')->insert($allRelations);
+            $qiitaItems = QiitaItem::whereIn('item_id', $allItems->keys())->get();
+            $relations = [];
+            foreach ($qiitaItems as $qiitaItem) {
+                $relations[] = [
+                    'user_id' => $userId,
+                    'qiita_item_id' => $qiitaItem->id,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+            DB::table('user_qiita_item')->insertOrIgnore($relations);
         });
 
         return [
@@ -184,10 +185,10 @@ class QiitaService implements QiitaServiceInterface
         $convertedItem = [
             $itemId => [
                 'item_id' => $itemId,
-                'item_title' => Arr::get($item, 'title'),
-                'item_url' => Arr::get($item, 'url'),
-                'item_tags' => json_encode(Arr::get($item, 'tags')),
-                'item_user_id' => Arr::get($item, 'user.id'),
+                'title' => Arr::get($item, 'title'),
+                'url' => Arr::get($item, 'url'),
+                'tags' => json_encode(Arr::get($item, 'tags')),
+                'user_id' => Arr::get($item, 'user.id'),
                 'item_created_at' => (new Carbon(Arr::get($item, 'created_at')))->format(Carbon::DEFAULT_TO_STRING_FORMAT),
                 'item_updated_at' => (new Carbon(Arr::get($item, 'updated_at')))->format(Carbon::DEFAULT_TO_STRING_FORMAT),
                 'created_at' => $now,

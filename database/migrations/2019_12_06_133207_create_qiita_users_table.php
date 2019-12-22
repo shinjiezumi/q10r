@@ -14,10 +14,13 @@ class CreateQiitaUsersTable extends Migration
     public function up()
     {
         Schema::create('qiita_users', function (Blueprint $table) {
-            $table->string('user_id')->primary();
+            $table->bigIncrements('id');
+            $table->string('user_id');
             $table->string('profile_image_url');
             $table->integer('followers_count');
             $table->timestamps();
+
+            $table->unique('user_id');
 		});
     }
 
