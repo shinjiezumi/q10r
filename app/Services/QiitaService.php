@@ -10,6 +10,7 @@ use App\Repositories\QiitaItem;
 use App\Repositories\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 
@@ -81,7 +82,25 @@ class QiitaService implements QiitaServiceInterface
      */
     public function getItems(array $params): array
     {
-        return [];
+        $offset = $params['page'];
+        $limit = $params['per_page'];
+        $user = Auth::user();
+        $items = User::find($user->id)
+            ->qiitaItems()
+            ->orderBy('item_created_at', 'desc')
+            ->offset($offset)
+            ->limit($limit)
+            ->paginate($limit);
+
+        $response = $items->toArray();
+        $response['data'] = [];
+        foreach ($items as $item) {
+            $responseItem = $item->toArray();
+            $responseItem['tags'] = json_decode($responseItem['tags'], true);
+            $responseItem['user'] = $item->qiitaUser()->first()->toArray();
+            $response['data'][] = $responseItem;
+        }
+        return $response;
     }
 
 	/**

@@ -189,7 +189,7 @@ class Home extends React.Component {
       );
     };
 
-    return _.map(items, (item, i) => (
+    return _.map(items.data, (item, i) => (
       <Box key={item.id}>
         <div className={classes.item}>
           <div className={classes.user}>
@@ -199,7 +199,7 @@ class Home extends React.Component {
           </div>
           <div className={classes.itemContent}>
             <div>
-              <Link href={`https://qiita.com/${item.user.id}`} target="_blank">{item.user.id}</Link>
+              <Link href={`https://qiita.com/${item.user.user_id}`} target="_blank">{item.user.user_id}</Link>
               が
               {moment(item.created_at).format('YYYY/MM/DD')}
               に投稿
