@@ -201,7 +201,7 @@ class Home extends React.Component {
             <div>
               <Link href={`https://qiita.com/${item.user.user_id}`} target="_blank">{item.user.user_id}</Link>
               が
-              {moment(item.created_at).format('YYYY/MM/DD')}
+              {moment(item.item_created_at).format('YYYY/MM/DD')}
               に投稿
             </div>
             <Typography component="h2" variant="subtitle1">
@@ -220,11 +220,16 @@ class Home extends React.Component {
   }
 
   handlePaginate(offset) {
-    this.setState({offset})
+    const page = offset / 10 + 1;
+    this.setState({offset: offset, page: page});
+    this.props.getItems({
+      page: page,
+      per_page: 10
+    });
   }
 
   renderPagination() {
-    const {classes, isLoading, error} = this.props;
+    const {classes, isLoading, error, items} = this.props;
     const className = [classes.box, classes.tac].join(' ');
 
     if (isLoading || error) {
@@ -235,7 +240,7 @@ class Home extends React.Component {
         <Pagination
           limit={10}
           offset={this.state.offset}
-          total={100}
+          total={items.total}
           onClick={(e, offset) => this.handlePaginate(offset)}
         />
       </Box>
