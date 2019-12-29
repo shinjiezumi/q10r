@@ -34,7 +34,16 @@ class QiitaController extends Controller
         return $this->qiitaService->getItems($params);
     }
 
-    /**
+	/**
+	 * @param Request $request
+	 * @return array
+	 */
+	public function getTags(Request $request) :array
+	{
+		return $this->qiitaService->getTags();
+	}
+
+	/**
      * @param Request $request
      * @return mixed
      */

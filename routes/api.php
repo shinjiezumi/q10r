@@ -18,4 +18,5 @@ Route::get('/user', function () {
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/items', 'QiitaController@getItems')->name('getItems');
+Route::get('/tags', 'QiitaController@getTags')->name('getTags');
 Route::post('/importQiita', 'QiitaController@import')->name('import');

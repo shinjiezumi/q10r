@@ -20,7 +20,7 @@ import {
 import Pagination from "material-ui-flat-pagination";
 import {connect} from "react-redux";
 import {compose} from "recompose";
-import {getItems, importQiita, removeNotice} from "../actions/qiita";
+import {getItems, getTags, importQiita, removeNotice} from "../actions/qiita";
 import moment from "moment";
 import MySnackbarContentWrapper from "../components/Notice";
 
@@ -105,6 +105,7 @@ class Home extends React.Component {
       page: 1,
       per_page: 10
     });
+    this.props.getTags();
   }
 
   importQiita() {
@@ -128,7 +129,7 @@ class Home extends React.Component {
   }
 
   renderFilterMenu() {
-    const {classes} = this.props;
+    const {classes, tags} = this.props;
 
     return (
       <React.Fragment>
@@ -143,20 +144,17 @@ class Home extends React.Component {
         </Box>
         <Box className={classes.box}>
           <Typography component="h3" variant="subtitle1"><LocalOfferRounded/>QMタグ</Typography>
-          <li className={classes.listItem}>
-            <div className={classes.mr05}>
-              <img src="https://placehold.jp/16x16.png" alt=""/>
-            </div>
-            <div className={classes.mr05}>Javascript</div>
-            <div>20</div>
-          </li>
-          <li className={classes.listItem}>
-            <div className={classes.mr05}>
-              <img src="https://placehold.jp/16x16.png" alt=""/>
-            </div>
-            <div className={classes.mr05}>Docker</div>
-            <div>10</div>
-          </li>
+          {
+            _.map(tags, tag => (
+              <li className={classes.listItem} key={tag.id}>
+                <div className={classes.mr05}>
+                  <img src="https://placehold.jp/16x16.png" alt=""/>
+                </div>
+                <div className={classes.mr05}>{tag.name}</div>
+                <div>{tag.count}</div>
+              </li>
+            ))
+          }
         </Box>
       </React.Fragment>
     )
@@ -300,10 +298,11 @@ const mapStateToProps = state => ({
   isLoading: state.qiita.isLoading,
   isNotice: state.qiita.isNotice,
   items: state.qiita.items,
+  tags: state.qiita.tags,
   message: state.qiita.message,
   error: state.qiita.error
 });
-const mapDispatchToProps = ({getItems, removeNotice, importQiita});
+const mapDispatchToProps = ({getItems, getTags, removeNotice, importQiita});
 const enhance = compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles));
 
 export default enhance(Home);

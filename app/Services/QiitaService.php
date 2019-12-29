@@ -106,6 +106,24 @@ class QiitaService implements QiitaServiceInterface
 	/**
 	 * {@inheritDoc}
 	 */
+	public function getTags(): array
+	{
+		$user = Auth::user();
+		$tags = DB::table('tag_user_qiita_item AS tuqi')
+			->select(DB::raw('t.id AS id, t.name AS name, COUNT(*) AS count'))
+			->join('user_qiita_item AS uqi', 'tuqi.user_qiita_item_id', '=', 'uqi.id')
+			->join('tags AS t', 'tuqi.tag_id', '=', 't.id')
+			->where('uqi.user_id', '=', $user->id)
+			->groupBy('tuqi.tag_id')
+			->orderByDesc('count')
+			->get();
+
+		return $tags->toArray();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
     public function import(array $data): array
 	{
         $path = "/api/v2/users/{$data['qiita_user_name']}/stocks";

@@ -32,7 +32,12 @@ interface QiitaServiceInterface
      */
 	public function getItems(array $params) :array;
 
-    /**
+	/**
+	 * @return array
+	 */
+	public function getTags() :array;
+
+	/**
      * @param array $data
      * @return array
      */
