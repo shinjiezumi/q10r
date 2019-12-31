@@ -11,16 +11,23 @@ import {
   Typography,
   withStyles,
   Input,
-  CircularProgress, Snackbar, Button
+  CircularProgress,
+  Snackbar,
+  Button,
+  Fab
 } from "@material-ui/core";
 import {
   FolderTwoTone,
-  LocalOfferRounded, SearchRounded
+  LocalOfferRounded,
+  SearchRounded,
+  Add as AddIcon,
+  Cancel as CancelIcon,
+  AddCircle as AddCircleIcon
 } from "@material-ui/icons";
 import Pagination from "material-ui-flat-pagination";
 import {connect} from "react-redux";
 import {compose} from "recompose";
-import {getItems, getTags, importQiita, removeNotice} from "../actions/qiita";
+import {getItems, getTags, addTag, importQiita, removeNotice} from "../actions/qiita";
 import moment from "moment";
 import MySnackbarContentWrapper from "../components/Notice";
 
@@ -30,6 +37,9 @@ const styles = {
   },
   tac: {
     textAlign: 'center',
+  },
+  df: {
+    display: 'flex',
   },
   main: {
     display: 'flex',
@@ -85,6 +95,10 @@ const styles = {
       content: '""',
     }
   },
+  tagModifyContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   button: {
     width: '300px'
   }
@@ -95,6 +109,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       offset: 0,
+      tagAdd: false
     };
     this.handleClose = this.handleClose.bind(this);
     this.importQiita = this.importQiita.bind(this);
@@ -112,6 +127,19 @@ class Home extends React.Component {
     this.props.importQiita();
   };
 
+  handleTagAdd() {
+    this.setState({tagAdd: true});
+  }
+
+  tagAdd() {
+    this.props.addTag(document.getElementById('addTagName').value);
+    this.setState({tagAdd: false});
+
+  }
+
+  tagAddCancel() {
+    this.setState({tagAdd: false});
+  }
 
   handleClose(event, reason) {
     const {error} = this.props;
@@ -147,13 +175,34 @@ class Home extends React.Component {
           {
             _.map(tags, tag => (
               <li className={classes.listItem} key={tag.id}>
-                <div className={classes.mr05}>
-                  <img src="https://placehold.jp/16x16.png" alt=""/>
-                </div>
                 <div className={classes.mr05}>{tag.name}</div>
                 <div>{tag.count}</div>
               </li>
             ))
+          }
+          {
+            this.state.tagAdd && (
+              <div className={classes.df}>
+                <Input id="addTagName" type="text" placeholder=""/>
+                <div className={classes.tagModifyContainer}>
+                  <div>
+                    <button onClick={() => this.tagAdd()}><AddCircleIcon color='primary'/></button>
+                  </div>
+                  <div>
+                    <button onClick={() => this.tagAddCancel()}><CancelIcon color='secondary'/></button>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+          {
+            !this.state.tagAdd && (
+              <div className={classes.tac}>
+                <Fab color="primary" aria-label="add" size="small" onClick={() => this.handleTagAdd()}>
+                  <AddIcon />
+                </Fab>
+              </div>
+            )
           }
         </Box>
       </React.Fragment>
@@ -302,7 +351,7 @@ const mapStateToProps = state => ({
   message: state.qiita.message,
   error: state.qiita.error
 });
-const mapDispatchToProps = ({getItems, getTags, removeNotice, importQiita});
+const mapDispatchToProps = ({getItems, getTags, addTag, removeNotice, importQiita});
 const enhance = compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles));
 
 export default enhance(Home);

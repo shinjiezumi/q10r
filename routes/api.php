@@ -19,4 +19,5 @@ Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/items', 'QiitaController@getItems')->name('getItems');
 Route::get('/tags', 'QiitaController@getTags')->name('getTags');
+Route::post('/tag', 'QiitaController@addTag')->name('addTag');
 Route::post('/importQiita', 'QiitaController@import')->name('import');

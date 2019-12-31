@@ -38,6 +38,12 @@ interface QiitaServiceInterface
 	public function getTags() :array;
 
 	/**
+	 * @param string $tagName
+	 * @return array
+	 */
+	public function addTag(string $tagName) :array;
+
+	/**
      * @param array $data
      * @return array
      */

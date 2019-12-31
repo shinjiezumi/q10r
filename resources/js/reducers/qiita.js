@@ -2,6 +2,7 @@ import {
   LOADING,
   GET_ITEMS_SUCCESS,
   GET_TAGS_SUCCESS,
+  ADD_TAG_SUCCESS,
   API_REQUEST_FAILURE,
   SHOW_NOTICE,
   REMOVE_NOTICE
@@ -36,6 +37,13 @@ export default (state = initialState, action) => {
         ...state,
         isLoading: false,
         tags: response.data,
+      };
+    case ADD_TAG_SUCCESS:
+      const tags = state.tags.concat(response.data);
+      return {
+        ...state,
+        isLoading: false,
+        tags: tags
       };
     case API_REQUEST_FAILURE:
       return {

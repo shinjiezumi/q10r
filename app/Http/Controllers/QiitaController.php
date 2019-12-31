@@ -44,6 +44,16 @@ class QiitaController extends Controller
 	}
 
 	/**
+	 * @param Request $request
+	 * @return array
+	 */
+	public function addTag(Request $request) :array
+	{
+		$tagName = $request->get('name');
+		return $this->qiitaService->addTag($tagName);
+	}
+
+	/**
      * @param Request $request
      * @return mixed
      */
