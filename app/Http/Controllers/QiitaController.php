@@ -54,6 +54,16 @@ class QiitaController extends Controller
 	}
 
 	/**
+	 * @param Request $request
+	 * @return array
+	 */
+	public function deleteTag(Request $request) :array
+	{
+		$tagId = $request->get('id');
+		return $this->qiitaService->deleteTag($tagId);
+	}
+
+	/**
      * @param Request $request
      * @return mixed
      */

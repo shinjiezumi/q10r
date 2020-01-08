@@ -9,12 +9,14 @@ use App\Repositories\QiitaApiToken;
 use App\Repositories\QiitaItem;
 use App\Repositories\Tag;
 use App\Repositories\User;
+use App\repositories\UserTag;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
+use function foo\func;
 
 class QiitaService implements QiitaServiceInterface
 {
@@ -156,6 +158,23 @@ class QiitaService implements QiitaServiceInterface
 			'id' => $tag->id,
 			'name' => $tag->name,
 			'count' => 0,
+		];
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function deleteTag(int $tagId): array
+	{
+		$user = Auth::user();
+
+		DB::transaction(function () use ($user, $tagId) {
+			$userTag = UserTag::where('user_id', '=', $user->id)->where('tag_id', '=', $tagId)->first();
+			$userTag->delete();
+		});
+
+		return [
+			'id' => $tagId
 		];
 	}
 

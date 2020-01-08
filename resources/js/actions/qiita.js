@@ -1,10 +1,10 @@
 import {OK} from "../util";
-import {AddCircle} from "@material-ui/icons";
 
 export const LOADING = 'LOADING';
 export const GET_ITEMS_SUCCESS = 'GET_ITEMS_SUCCESS';
 export const GET_TAGS_SUCCESS = 'GET_TAGS_SUCCESS';
 export const ADD_TAG_SUCCESS = 'ADD_TAG_SUCCESS';
+export const REMOVE_TAG_SUCCESS = 'REMOVE_TAG_SUCCESS';
 export const API_REQUEST_FAILURE= 'API_REQUEST_FAILURE';
 export const SHOW_NOTICE= 'SHOW_NOTICE';
 export const REMOVE_NOTICE= 'REMOVE_NOTICE';
@@ -35,6 +35,16 @@ export const addTag = (tagName) => async dispatch => {
 
   if (response.status === OK) {
     dispatch({type: ADD_TAG_SUCCESS, response});
+  } else {
+    dispatch({type: API_REQUEST_FAILURE, response});
+  }
+};
+
+export const removeTag = (tagId) => async dispatch => {
+  const response = await axios.delete('/api/tag', {data: {id: tagId}});
+
+  if (response.status === OK) {
+    dispatch({type: REMOVE_TAG_SUCCESS, response});
   } else {
     dispatch({type: API_REQUEST_FAILURE, response});
   }

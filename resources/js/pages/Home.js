@@ -21,13 +21,15 @@ import {
   LocalOfferRounded,
   SearchRounded,
   Add as AddIcon,
+  AddCircle as AddCircleIcon,
   Cancel as CancelIcon,
-  AddCircle as AddCircleIcon
+  Done as DoneIcon,
+  Edit as EditIcon,
 } from "@material-ui/icons";
 import Pagination from "material-ui-flat-pagination";
 import {connect} from "react-redux";
 import {compose} from "recompose";
-import {getItems, getTags, addTag, importQiita, removeNotice} from "../actions/qiita";
+import {getItems, getTags, addTag, removeTag, importQiita, removeNotice} from "../actions/qiita";
 import moment from "moment";
 import MySnackbarContentWrapper from "../components/Notice";
 
@@ -109,7 +111,8 @@ class Home extends React.Component {
     super(props);
     this.state = {
       offset: 0,
-      tagAdd: false
+      tagAdd: false,
+      tagEditMode: false
     };
     this.handleClose = this.handleClose.bind(this);
     this.importQiita = this.importQiita.bind(this);
@@ -127,18 +130,20 @@ class Home extends React.Component {
     this.props.importQiita();
   };
 
-  handleTagAdd() {
-    this.setState({tagAdd: true});
+  switchTagEditMode() {
+    this.setState({tagEditMode: !this.state.tagEditMode});
+  }
+
+  switchTagAdd() {
+    this.setState({tagAdd: !this.state.tagAdd});
   }
 
   tagAdd() {
     this.props.addTag(document.getElementById('addTagName').value);
-    this.setState({tagAdd: false});
-
   }
 
-  tagAddCancel() {
-    this.setState({tagAdd: false});
+  removeTag(tagId) {
+    this.props.removeTag(tagId);
   }
 
   handleClose(event, reason) {
@@ -175,35 +180,57 @@ class Home extends React.Component {
           {
             _.map(tags, tag => (
               <li className={classes.listItem} key={tag.id}>
-                <div className={classes.mr05}>{tag.name}</div>
-                <div>{tag.count}</div>
+                <Grid container>
+                  <Grid item xs={8}>
+                    <div className={classes.mr05}>{tag.name}</div>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <div>{tag.count}</div>
+                  </Grid>
+                  {
+                    this.state.tagEditMode && (
+                      <Grid item xs={2}>
+                        <div><button onClick={() => this.removeTag(tag.id)}>
+                          <CancelIcon color='secondary'/></button>
+                        </div>
+                      </Grid>
+                    )
+                  }
+                </Grid>
               </li>
             ))
           }
           {
-            this.state.tagAdd && (
-              <div className={classes.df}>
-                <Input id="addTagName" type="text" placeholder=""/>
-                <div className={classes.tagModifyContainer}>
+            this.state.tagEditMode && this.state.tagAdd && (
+              <Grid container className={classes.df}>
+                <Grid item xs={10}>
+                  <Input id="addTagName" type="text" placeholder="" fullWidth/>
+                </Grid>
+                <Grid item xs={2} className={classes.df}>
                   <div>
-                    <button onClick={() => this.tagAdd()}><AddCircleIcon color='primary'/></button>
+                    <button onClick={() => this.tagAdd()}><DoneIcon color='primary'/></button>
                   </div>
                   <div>
-                    <button onClick={() => this.tagAddCancel()}><CancelIcon color='secondary'/></button>
+                    <button onClick={() => this.switchTagAdd()}><CancelIcon color='secondary'/></button>
                   </div>
-                </div>
-              </div>
+                </Grid>
+              </Grid>
             )
           }
           {
-            !this.state.tagAdd && (
+            this.state.tagEditMode && !this.state.tagAdd && (
               <div className={classes.tac}>
-                <Fab color="primary" aria-label="add" size="small" onClick={() => this.handleTagAdd()}>
-                  <AddIcon />
-                </Fab>
+                <button onClick={() => this.switchTagAdd()}><AddCircleIcon color='primary'/></button>
               </div>
             )
           }
+          <div className={classes.tac}>
+            <Fab color={!this.state.tagEditMode ? 'primary' : 'secondary'} aria-label="add" size="small" onClick={() => this.switchTagEditMode()}>
+              {
+                !this.state.tagEditMode ? (<EditIcon />) : (<CancelIcon />)
+              }
+            </Fab>
+          </div>
         </Box>
       </React.Fragment>
     )
@@ -351,7 +378,7 @@ const mapStateToProps = state => ({
   message: state.qiita.message,
   error: state.qiita.error
 });
-const mapDispatchToProps = ({getItems, getTags, addTag, removeNotice, importQiita});
+const mapDispatchToProps = ({getItems, getTags, addTag, removeTag, removeNotice, importQiita});
 const enhance = compose(connect(mapStateToProps, mapDispatchToProps), withStyles(styles));
 
 export default enhance(Home);

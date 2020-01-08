@@ -3,6 +3,7 @@ import {
   GET_ITEMS_SUCCESS,
   GET_TAGS_SUCCESS,
   ADD_TAG_SUCCESS,
+  REMOVE_TAG_SUCCESS,
   API_REQUEST_FAILURE,
   SHOW_NOTICE,
   REMOVE_NOTICE
@@ -18,7 +19,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
   const response = action.response;
-
+  let tags;
   switch (action.type) {
     case LOADING:
       return {
@@ -39,7 +40,16 @@ export default (state = initialState, action) => {
         tags: response.data,
       };
     case ADD_TAG_SUCCESS:
-      const tags = state.tags.concat(response.data);
+      tags = state.tags.concat(response.data);
+      return {
+        ...state,
+        isLoading: false,
+        tags: tags
+      };
+    case REMOVE_TAG_SUCCESS:
+      tags = _.reject(state.tags, function (tag) {
+        return tag.id === response.data.id
+      });
       return {
         ...state,
         isLoading: false,

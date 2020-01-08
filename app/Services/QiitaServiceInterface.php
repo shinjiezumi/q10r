@@ -44,6 +44,12 @@ interface QiitaServiceInterface
 	public function addTag(string $tagName) :array;
 
 	/**
+	 * @param int $tagId
+	 * @return array
+	 */
+	public function deleteTag(int $tagId) :array;
+
+	/**
      * @param array $data
      * @return array
      */
