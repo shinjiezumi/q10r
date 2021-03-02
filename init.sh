@@ -8,5 +8,5 @@ chmod -R a+w storage/ bootstrap/cache
 php artisan migrate --seed
 APP_ENV=testing php artisan migrate
 
-npm install
-npm run dev
+yarn install
+yarn run dev

@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     default-mysql-client
 
-RUN docker-php-ext-install pdo_mysql
+RUN apt-get install -y libonig-dev libpq-dev\
+    && docker-php-ext-install pdo_pgsql mbstring
 
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install -y --no-install-recommends nodejs
