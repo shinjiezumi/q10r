@@ -42,7 +42,7 @@ jobs:
       - run:
           name: composer install
           command: |
-            composer install -n --prefer-dist
+            composer install
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
