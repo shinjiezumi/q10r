@@ -35,7 +35,7 @@ return [
     ],
 
     'stripe' => [
-        'model' => App\User::class,
+        'model' => App\Repositories\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook' => [
@@ -44,4 +44,9 @@ return [
         ],
     ],
 
+	'qiita' => [
+		'client_id'     => env('QIITA_CLIENT_ID'),
+		'client_secret' => env('QIITA_CLIENT_SECRET'),
+		'redirect'      => env('QIITA_CALLBACK_URL'),
+	],
 ];

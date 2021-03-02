@@ -4,7 +4,7 @@ services:
   web:
     build: docker/nginx
     ports:
-      - 180:80
+      - 8000:80
     depends_on:
       - app
     volumes:
@@ -25,10 +25,16 @@ services:
   db:
     build: docker/mysql
     ports:
-      - 13306:3306
+      - 3306:3306
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./logs/mysql:/var/log/mysql
     environment:
-      TZ: Asia/Tokyo
       MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Tokyo
+  redis:
+    build: docker/redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data/:/data

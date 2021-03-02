@@ -67,8 +67,9 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
-            'model' => App\User::class,
+//            'driver' => 'eloquent',
+            'driver' => 'auth_ex',
+            'model' => App\Repositories\User::class,
         ],
 
         // 'users' => [

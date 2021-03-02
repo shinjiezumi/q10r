@@ -12,4 +12,12 @@ const mix = require('laravel-mix');
  */
 
 mix.react('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+
+const sass = (process.env.MIX_APP_ENV === 'production') ? 'app' : 'app-dev';
+mix.sass(`resources/sass/${sass}.scss`, 'public/css/app.css');
+
+mix.browserSync({
+  files: 'resources/js/',
+  proxy: 'localhost:8000',
+  open: false,
+}).version();

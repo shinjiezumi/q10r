@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +11,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/user', function () {
+	return Auth::user();
+})->name('user');
+
+Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+
+Route::get('/items', 'QiitaController@getItems')->name('getItems');
+Route::get('/tags', 'QiitaController@getTags')->name('getTags');
+Route::post('/tag', 'QiitaController@addTag')->name('addTag');
+Route::delete('/tag', 'QiitaController@deleteTag')->name('deleteTag');
+Route::post('/importQiita', 'QiitaController@import')->name('import');

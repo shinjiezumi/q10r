@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     unzip \
     iputils-ping \
-    vim
+    vim \
+    default-mysql-client
 
 RUN docker-php-ext-install pdo_mysql
 
