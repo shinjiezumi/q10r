@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'postgres'),
 
     /*
     |--------------------------------------------------------------------------
@@ -78,6 +78,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'pgsql_testing' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
@@ -93,7 +108,7 @@ return [
 
 		// 単体テスト用DB
 		'mysql_testing' => [
-			'driver' => 'mysql',
+			'driver' => 'postgres',
 			'url' => env('DATABASE_URL'),
 			'host' => env('DB_HOST', '127.0.0.1'),
 			'port' => env('DB_PORT', '3306'),
@@ -113,17 +128,16 @@ return [
 		],
 
 		'circleci' => [
-			'driver' => 'mysql',
-			'host' => '127.0.0.1',
-			'port' => '3306',
-			'database' => 'circleci',
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8mb4',
-			'collation' => 'utf8mb4_unicode_ci',
-			'prefix' => '',
-			'strict' => true,
-			'engine' => null,
+            'driver' => 'pgsql',
+            'host' => '127.0.0.1',
+            'port' => '5432',
+            'database' => 'circleci_test',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
 		],
     ],
 
