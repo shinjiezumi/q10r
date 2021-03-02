@@ -10,16 +10,18 @@ services:
     volumes:
       - ./logs/nginx:/var/log/nginx
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
-      - ./public:/var/www/html/public
+      - ./src/public:/var/www/html/public
     environment:
       TZ: Asia/Tokyo
   app:
-    build: docker/php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     depends_on:
       - db
     volumes:
       - ./docker/php/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
-      - ./:/var/www/html
+      - ./src:/var/www/html
     environment:
       TZ: Asia/Tokyo
   db:
@@ -28,7 +30,7 @@ services:
       - 5432:5432
     volumes:
       - ./docker/postgres/data:/var/lib/postgresql/data
-      - ./logs/postgresql:/var/log/postgresql
+      - ./logs/postgres:/var/log/postgresql
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
