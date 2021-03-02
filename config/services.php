@@ -47,6 +47,6 @@ return [
 	'qiita' => [
 		'client_id'     => env('QIITA_CLIENT_ID'),
 		'client_secret' => env('QIITA_CLIENT_SECRET'),
-		'redirect'      => env('QIITA_REDIRECT'),
+		'redirect'      => env('QIITA_CALLBACK_URL'),
 	],
 ];

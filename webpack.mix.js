@@ -18,6 +18,6 @@ mix.sass(`resources/sass/${sass}.scss`, 'public/css/app.css');
 
 mix.browserSync({
   files: 'resources/js/',
-  proxy: 'localhost:8082',
+  proxy: 'localhost:8000',
   open: false,
 }).version();
