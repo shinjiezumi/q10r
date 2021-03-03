@@ -35,35 +35,40 @@ jobs:
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "composer.json" }}
+            - v1-dependencies-{{ checksum "./src/composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run:
           name: composer install
+          working_directory: ./src
           command: |
-            composer install
+            mv ../vendor ./
+            php ./composer.phar install
       - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
+          key: v1-dependencies-{{ checksum "./src/composer.json" }}
           paths:
-            - ./vendor
+            - ./src/vendor
 
       # Install Node modules
       - restore_cache:
           keys:
-            - node-v1-{{ checksum "package.json" }}
+            - node-v1-{{ checksum "./src/package.json" }}
             - node-v1-
       - run:
           name: yarn install
+          working_directory: ./src
           command: |
+            mv ../node_modules ./
             yarn install
       - save_cache:
-          key: node-v1-{{ checksum "package.json" }}
+          key: node-v1-{{ checksum "./src/package.json" }}
           paths:
-            - node_modules
+            - ./src/node_modules
 
       # setup database
       - run:
           name: setup database
+          working_directory: ./src
           command: |
             php artisan migrate
             php artisan db:seed
@@ -71,6 +76,7 @@ jobs:
       # run test
       - run:
           name: run test
+          working_directory: ./src
           command: |
             ./vendor/bin/phpunit
 
