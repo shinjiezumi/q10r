@@ -1,0 +1,21 @@
+#!/bin/sh
+exec 1>&2
+
+# for PHP
+for FILE in `git diff --name-status HEAD~..HEAD -- | grep -E '^[AUMR].*\.php$' | awk '{print $NF}'`; do
+    if php -l $FILE; then
+        ./vendor/bin/php-cs-fixer fix --config .php_cs -- $FILE
+    else
+        exit 1
+    fi
+done
+
+# for JavaScript
+for FILE in `git diff --name-status HEAD~..HEAD -- | grep -E '^[AUMR].*\.jsx?$' | awk '{print $NF}'`; do
+    if ./node_modules/.bin/babel $FILE > /dev/null; then
+        ./node_modules/.bin/prettier --write $FILE
+        ./node_modules/.bin/eslint -- $FILE
+    else
+        exit 1
+    fi
+done
