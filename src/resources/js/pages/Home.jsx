@@ -4,32 +4,31 @@ import Header from '../components/Header'
 import Footer from "../components/Footer";
 import {
   Box,
+  Button,
+  CircularProgress,
   Container,
   CssBaseline,
-  Link,
+  Fab,
   Grid,
-  Typography,
-  withStyles,
   Input,
-  CircularProgress,
+  Link,
   Snackbar,
-  Button,
-  Fab
+  Typography,
+  withStyles
 } from "@material-ui/core";
 import {
-  FolderTwoTone,
-  LocalOfferRounded,
-  SearchRounded,
-  Add as AddIcon,
   AddCircle as AddCircleIcon,
   Cancel as CancelIcon,
   Done as DoneIcon,
   Edit as EditIcon,
+  FolderTwoTone,
+  LocalOfferRounded,
+  SearchRounded,
 } from "@material-ui/icons";
 import Pagination from "material-ui-flat-pagination";
 import {connect} from "react-redux";
 import {compose} from "recompose";
-import {getItems, getTags, addTag, removeTag, importQiita, removeNotice} from "../actions/qiita";
+import {addTag, getItems, getTags, importQiita, removeNotice, removeTag} from "../actions/qiita";
 import moment from "moment";
 import MySnackbarContentWrapper from "../components/Notice";
 
