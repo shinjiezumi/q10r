@@ -331,10 +331,11 @@ class Home extends React.Component {
         <Header/>
         <Container component="main" className={classes.main}>
           <Grid container>
-            <Grid item xs={12} sm={3}>
-              {this.renderFilterMenu()}
-            </Grid>
-            <Grid item xs={12} sm={9}>
+            {/* TODO  */}
+            {/*<Grid item xs={12} sm={3}>*/}
+            {/*  {this.renderFilterMenu()}*/}
+            {/*</Grid>*/}
+            <Grid item xs={12} sm={12}>
               {
                 isNotice && (
                   <Snackbar
