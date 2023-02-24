@@ -1,13 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
 import Footer from "../components/Footer";
-import {
-  Box,
-  Button,
-  Container,
-  Link,
-  makeStyles,
-} from "@material-ui/core";
+import {Box, Button, Container, Link, makeStyles,} from "@material-ui/core";
 import {APP_NAME} from "../constants";
 
 const useStyles = makeStyles(theme => ({
@@ -19,7 +13,6 @@ const useStyles = makeStyles(theme => ({
   main: {
     display: 'flex',
     flexDirection: 'column',
-    // height: '100vh',
     textAlign: 'center'
   },
   content: {

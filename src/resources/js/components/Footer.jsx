@@ -50,13 +50,15 @@ const useStyles = makeStyles(theme => ({
 export default function Footer() {
   const classes = useStyles();
 
+  const currentYear = new Date().getFullYear()
+
   return (
     <Box component="footer">
       <Container className={classes.footer}>
         <div className={classes.footerWrap}>
           <div className={classes.footerCopyright}>
-            <span>&copy; 2019</span>
-            <a href="https://s9i.work" className={classes.copyrightLink}>shinjiezumi</a>
+            <span>&copy; {currentYear}</span>
+            <a href="https://shinjiezumi.work/contact" className={classes.copyrightLink}>shinjiezumi</a>
           </div>
           <div>
             <ul className={classes.footerSnsList}>
