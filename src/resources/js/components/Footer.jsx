@@ -1,6 +1,7 @@
 import React from "react"
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {Box, Container, makeStyles} from "@material-ui/core";
+import {Link} from "react-router-dom";
+import {GitHub, Twitter} from '@material-ui/icons';
 
 const useStyles = makeStyles(theme => ({
   footer: {
@@ -63,14 +64,14 @@ export default function Footer() {
           <div>
             <ul className={classes.footerSnsList}>
               <li>
-                <a href="https://twitter.com/shinjiezumi" target="_blank">
-                  <FontAwesomeIcon icon={['fab', 'twitter']} className={classes.snsIcon}/>
-                </a>
+                <Link to="https://twitter.com/shinjiezumi" target="_blank">
+                  <Twitter className={classes.snsIcon}/>
+                </Link>
               </li>
               <li>
-                <a href="https://github.com/shinjiezumi" target="_blank">
-                  <FontAwesomeIcon icon={['fab', 'github']} className={classes.snsIcon}/>
-                </a>
+                <Link to="https://github.com/shinjiezumi" target="_blank">
+                  <GitHub className={classes.snsIcon}/>
+                </Link>
               </li>
             </ul>
           </div>
