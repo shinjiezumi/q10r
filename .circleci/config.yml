@@ -5,7 +5,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/workspace
+    working_directory: ~/workspace/src
 
     docker:
       - image: circleci/php:7.4-fpm-node-browsers
@@ -21,7 +21,8 @@ jobs:
 
     steps:
       # Checkout source
-      - checkout
+      - checkout:
+          path: ~/workspace
 
       # Install Container modules
       - run:
@@ -37,40 +38,35 @@ jobs:
       - restore_cache:
           keys:
             # "composer.lock" can be used if it is committed to the repo
-            - v1-dependencies-{{ checksum "./src/composer.json" }}
+            - v1-dependencies-{{ checksum "composer.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run:
           name: composer install
-          working_directory: ./src
           command: |
-            mv ../vendor ./
-            php ./composer.phar install
+            composer install -n --prefer-dist
       - save_cache:
-          key: v1-dependencies-{{ checksum "./src/composer.json" }}
+          key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
-            - ./src/vendor
+            - vendor
 
       # Install Node modules
       - restore_cache:
           keys:
-            - node-v1-{{ checksum "./src/package.json" }}
+            - node-v1-{{ checksum "package.json" }}
             - node-v1-
       - run:
           name: yarn install
-          working_directory: ./src
           command: |
-            mv ../node_modules ./
             yarn install
       - save_cache:
-          key: node-v1-{{ checksum "./src/package.json" }}
+          key: node-v1-{{ checksum ".package.json" }}
           paths:
-            - ./src/node_modules
+            - node_modules
 
       # setup database
       - run:
           name: setup database
-          working_directory: ./src
           command: |
             php artisan migrate
             php artisan db:seed
@@ -78,7 +74,6 @@ jobs:
       # run test
       - run:
           name: run test
-          working_directory: ./src
           command: |
             ./vendor/bin/phpunit
 
