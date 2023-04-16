@@ -10,7 +10,7 @@ import {createMuiTheme, MuiThemeProvider} from "@material-ui/core";
 import 'ress'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {createStore, applyMiddleware} from 'redux'
+import {applyMiddleware, createStore} from 'redux'
 import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 import {BrowserRouter, Route, Switch} from 'react-router-dom'
@@ -23,6 +23,7 @@ import {green} from '@material-ui/core/colors'
 import reducer from './reducers'
 import Top from './pages/Top'
 import Login from './pages/Login'
+import Lp from "./pages/Lp";
 
 const enhancer = process.env.NODE_ENV === 'development' ? composeWithDevTools(applyMiddleware(thunk)) : applyMiddleware(thunk);
 const store = createStore(reducer, enhancer);
@@ -42,6 +43,7 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={Top}/>
           <Route exact path="/login" component={Login}/>
+          <Route exact path="/lp" component={Lp}/>
         </Switch>
       </BrowserRouter>
     </Provider>

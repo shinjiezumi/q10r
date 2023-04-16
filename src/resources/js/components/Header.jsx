@@ -64,7 +64,7 @@ class Header extends React.Component {
               <Link to="/login" className={classes.link}>ログイン</Link> :
               <Button className={classes.link} onClick={this.logout}>ログアウト</Button>
             }
-            <Link to="https://s9i.work/contact" className={classes.link}>お問い合わせ</Link>
+            <a href="https://shinjiezumi.work/contact">お問い合わせ</a>
           </Toolbar>
         </AppBar>
       </Box>
